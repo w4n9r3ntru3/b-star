@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <time.h>
 
+#include <algorithm>
 #include <memory>
 #include <vector>
 
@@ -11,9 +12,9 @@
 
 using namespace std;
 
-pair<unsigned, unsigned> read_pin_file(
-    ifstream &file, vector<Pin> &pin_list,
-    unordered_map<string, unsigned> &pin_map) {
+pair<unsigned, unsigned> read_pin_file(ifstream &file, vector<Pin> &pin_list,
+                                       unordered_map<string, unsigned> &pin_map,
+                                       unsigned &num_blocks) {
     auto buffer = string();
 
     unsigned out_width, out_height;
@@ -21,7 +22,6 @@ pair<unsigned, unsigned> read_pin_file(
     file >> buffer >> out_width >> out_height;
     assert(buffer == "Outline:");
 
-    unsigned num_blocks;
     file >> buffer >> num_blocks;
     assert(buffer == "NumBlocks:");
 
@@ -60,7 +60,8 @@ pair<unsigned, unsigned> read_pin_file(
     return make_pair(out_width, out_height);
 }
 
-void read_net_file(ifstream &file, vector<Net> &net_list,
+void read_net_file(ifstream &file, const vector<Pin> &pin_list,
+                   vector<Net> &net_list,
                    const unordered_map<string, unsigned> &pin_map) {
     auto buffer = string();
 
@@ -79,6 +80,10 @@ void read_net_file(ifstream &file, vector<Net> &net_list,
             file >> pin_name;
             connected.push_back(pin_map.at(pin_name));
         }
+        sort(connected.rbegin(), connected.rend(), [&](int i, int j) {
+            return pin_list[connected[i]].area_nonzero() <
+                   pin_list[connected[j]].area_nonzero();
+        });
         assert(connected.size() == num_degree);
         net_list.push_back(move(Net(move(connected))));
     }

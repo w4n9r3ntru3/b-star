@@ -17,6 +17,6 @@ std::pair<int, int> SA(const std::pair<unsigned, unsigned> &boundary,
                        BStar &tree, std::vector<Pin> &pin_list,
                        const std::vector<Net> &net_list,
                        const std::pair<unsigned, unsigned> &iter_info,
-                       const unsigned episodes, const unsigned high_temp,
-                       const double alpha, const double ratio, const double P,
-                       const double C);
+                       const unsigned num_blocks, const unsigned episodes,
+                       const unsigned high_temp, const double alpha,
+                       const double ratio, const double P, const double C);

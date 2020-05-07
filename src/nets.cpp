@@ -38,13 +38,22 @@ unsigned Net::hpwl(const vector<Pin> &pin_list) const {
 
     max_w = min_w = center.first;
     max_h = min_h = center.second;
-    const Pin &pin = pin_list[connected_pins[0]];
 
-    for (unsigned i = 1, x, y; i < connected_pins.size(); ++i) {
-        center = get_center(pin_list[connected_pins[i]]);
-        x = center.first;
-        y = center.second;
+    unsigned i, x, y;
+    bool halt;
+    for (i = 1, halt = false; i < connected_pins.size(); ++i) {
         const Pin &pin = pin_list[connected_pins[i]];
+        if (!pin.area_nonzero()) halt = true;
+        if (halt) {
+            x = pin.get_xpos();
+            y = pin.get_ypos();
+            assert(pin.get_width() == 0);
+            assert(pin.get_height() == 0);
+        } else {
+            center = get_center(pin_list[connected_pins[i]]);
+            x = center.first;
+            y = center.second;
+        }
         if (max_w < x) max_w = x;
         if (min_w > x) min_w = x;
         if (max_h < y) max_h = y;

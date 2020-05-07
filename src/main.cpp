@@ -35,8 +35,10 @@ int main(int argc, char const *argv[]) {
     auto pin_file = ifstream(argv[2]);
     auto net_file = ifstream(argv[3]);
 
-    auto dimension = read_pin_file(pin_file, pin_list, pin_map);
-    read_net_file(net_file, net_list, pin_map);
+    unsigned num_blocks;
+
+    auto dimension = read_pin_file(pin_file, pin_list, pin_map, num_blocks);
+    read_net_file(net_file, pin_list, net_list, pin_map);
 
     unsigned width = dimension.first;
     unsigned height = dimension.second;
@@ -55,7 +57,7 @@ int main(int argc, char const *argv[]) {
     // static_assert(init_prob <= 1. - 1. / (double)episodes);
 
     auto floorplan =
-        SA(dimension, tree, pin_list, net_list, iter_info, episodes,
+        SA(dimension, tree, pin_list, net_list, iter_info, num_blocks, episodes,
            burning_stage, alpha, ratio, init_prob, constant);
 
     printf("result = (%d, %d)\n", floorplan.first, floorplan.second);

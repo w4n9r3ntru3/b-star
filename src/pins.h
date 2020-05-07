@@ -12,9 +12,11 @@ class Pin {
 
    public:
     Pin();
+    Pin(const Pin &pin);
     Pin(Pin &&pin);
     Pin(unsigned i, unsigned j, bool b, const std::string &n);
 
+    Pin &operator=(const Pin &pin);
     Pin &operator=(Pin &&pin);
 
     int get_xpos() const;

@@ -6,6 +6,15 @@ using namespace std;
 
 Pin::Pin() : x(0), y(0), w(0), h(0), l(-1), r(-1), name("") {}
 
+Pin::Pin(const Pin &pin)
+    : x(pin.x),
+      y(pin.y),
+      w(pin.w),
+      h(pin.h),
+      l(pin.l),
+      r(pin.r),
+      name(pin.name) {}
+
 Pin::Pin(Pin &&pin)
     : x(pin.x),
       y(pin.y),
@@ -26,6 +35,17 @@ Pin::Pin(unsigned i, unsigned j, bool b, const string &n)
     }
 }
 
+Pin &Pin::operator=(const Pin &pin) {
+    x = pin.x;
+    y = pin.y;
+    w = pin.w;
+    h = pin.h;
+    l = pin.l;
+    r = pin.r;
+    name = pin.name;
+    return *this;
+}
+
 Pin &Pin::operator=(Pin &&pin) {
     x = pin.x;
     y = pin.y;
@@ -34,6 +54,7 @@ Pin &Pin::operator=(Pin &&pin) {
     l = pin.l;
     r = pin.r;
     name = move(pin.name);
+    return *this;
 }
 
 int Pin::get_xpos() const { return x; }

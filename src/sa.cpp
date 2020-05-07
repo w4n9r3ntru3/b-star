@@ -67,9 +67,9 @@ static bool is_close(double a, double b) {
 pair<int, int> SA(const pair<unsigned, unsigned> &boundary, BStar &tree,
                   vector<Pin> &pin_list, const vector<Net> &net_list,
                   const pair<unsigned, unsigned> &iter_info,
-                  const unsigned episodes, const unsigned high_temp,
-                  const double alpha, const double ratio, const double P,
-                  const double C) {
+                  const unsigned num_blocks, const unsigned episodes,
+                  const unsigned high_temp, const double alpha,
+                  const double ratio, const double P, const double C) {
     const unsigned width = boundary.first, height = boundary.second;
     const unsigned epochs = iter_info.first, interrupt = iter_info.second;
     const unsigned size = tree.get_size();
@@ -105,15 +105,15 @@ pair<int, int> SA(const pair<unsigned, unsigned> &boundary, BStar &tree,
     bool has_accepted;
     int iteration;
 
-    for (has_accepted = false, iteration = -high_temp; iteration < (int)epochs;
-         ++iteration) {
+    for (has_accepted = false, iteration = -(high_temp * num_blocks);
+         iteration < (int)(epochs * num_blocks); ++iteration) {
         double T;
         if (iteration < 0) {
             T = init_temp;
         } else if (iteration < (int)interrupt) {
-            T = init_temp / (iteration * C);
+            T = num_blocks * init_temp / (iteration * C);
         } else {
-            T = init_temp / iteration;
+            T = num_blocks * init_temp / iteration;
         }
 
         unsigned idx;

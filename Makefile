@@ -2,7 +2,7 @@ CXX = g++
 CXXFLAGS = -O3 -std=c++11 -Wall
 TARGETS = b-star.o boundaries.o costs.o pins.o io.o main.o nets.o sa.o
 BINARY = fp
-FLAGS =  -DNDEBUG
+FLAGS =
 
 .PHONY: all clean
 
