@@ -1,0 +1,22 @@
+#pragma once
+
+#include <fstream>
+#include <string>
+#include <unordered_map>
+
+#include "b-star.h"
+#include "costs.h"
+#include "nets.h"
+#include "pins.h"
+
+std::pair<unsigned, unsigned> read_pin_file(
+    std::ifstream &file, std::vector<Pin> &pin_list,
+    std::unordered_map<std::string, unsigned> &pin_map);
+
+void read_net_file(std::ifstream &file, std::vector<Net> &net_list,
+                   const std::unordered_map<std::string, unsigned> &pin_map);
+
+void save_file(std::ofstream &file, const time_t start_time, const double alpha,
+               const std::pair<int, int> dimension,
+               const std::vector<Pin> &pin_list,
+               const std::vector<Net> &net_list);
