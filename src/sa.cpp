@@ -18,10 +18,10 @@ unsigned total_area(const pair<int, int> dim) {
     return (unsigned)dim.first * (unsigned)dim.second;
 }
 
-unsigned total_hpwl(const vector<Pin> &pin_list, const vector<Net> &net_list) {
+unsigned total_hpwl(const vector<Pin>& pin_list, const vector<Net>& net_list) {
     unsigned idx, hpwl;
     for (idx = hpwl = 0; idx < net_list.size(); ++idx) {
-        const Net &net = net_list[idx];
+        const Net& net = net_list[idx];
         hpwl += net.hpwl();
     }
     return hpwl;
@@ -31,12 +31,14 @@ double total_cost(const double area, const double hpwl, const double alpha) {
     return alpha * area + (1 - alpha) * hpwl;
 }
 
-static void backup(const vector<Pin> &pin_list, vector<Pin> &best,
+static void backup(const vector<Pin>& pin_list,
+                   vector<Pin>& best,
                    const unsigned size) {
     best = vector<Pin>(pin_list.begin(), pin_list.begin() + size);
 }
 
-static void restore(vector<Pin> &pin_list, const vector<Pin> &best,
+static void restore(vector<Pin>& pin_list,
+                    const vector<Pin>& best,
                     const unsigned size) {
     copy(best.begin(), best.end(), pin_list.begin());
 }
@@ -64,12 +66,18 @@ static bool is_close(double a, double b) {
     return (a - b) < epsilon && (b - a) < epsilon;
 }
 
-pair<int, int> SA(const pair<unsigned, unsigned> &boundary, BStar &tree,
-                  vector<Pin> &pin_list, const vector<Net> &net_list,
-                  const pair<unsigned, unsigned> &iter_info,
-                  const unsigned num_blocks, const unsigned episodes,
-                  const unsigned high_temp, const double alpha,
-                  const double ratio, const double P, const double C) {
+pair<int, int> SA(const pair<unsigned, unsigned>& boundary,
+                  BStar& tree,
+                  vector<Pin>& pin_list,
+                  const vector<Net>& net_list,
+                  const pair<unsigned, unsigned>& iter_info,
+                  const unsigned num_blocks,
+                  const unsigned episodes,
+                  const unsigned high_temp,
+                  const double alpha,
+                  const double ratio,
+                  const double P,
+                  const double C) {
     const unsigned width = boundary.first, height = boundary.second;
     const unsigned epochs = iter_info.first, interrupt = iter_info.second;
     const unsigned size = tree.get_size();
@@ -231,9 +239,12 @@ pair<int, int> SA(const pair<unsigned, unsigned> &boundary, BStar &tree,
                 }
             }
 
-            if (width_okay) ++width_accepted;
-            if (height_okay) ++height_accepted;
-            if (area_okay) ++area_accepted;
+            if (width_okay)
+                ++width_accepted;
+            if (height_okay)
+                ++height_accepted;
+            if (area_okay)
+                ++area_accepted;
 
             cost_function.update_width(!width_okay, episodes);
             cost_function.update_height(!height_okay, episodes);

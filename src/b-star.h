@@ -8,17 +8,17 @@
 
 class BStar {
     std::vector<unsigned> nodes;
-    std::vector<Pin> *pin_list_ptr;
+    std::vector<Pin>* pin_list_ptr;
 
    public:
     BStar();
-    BStar(std::vector<Pin> &plist, unsigned width, unsigned height);
+    BStar(std::vector<Pin>& plist, unsigned width, unsigned height);
 
     unsigned get_size(void) const;
     unsigned get_root(void) const;
 
-    std::vector<Pin> &pin_list(void);
-    const std::vector<Pin> &pin_list(void) const;
+    std::vector<Pin>& pin_list(void);
+    const std::vector<Pin>& pin_list(void) const;
 
     void check(void) const;
     std::pair<int, int> update(void) const;
@@ -27,8 +27,10 @@ class BStar {
 
     void permute(const unsigned idx);
     void swap(const unsigned i, const unsigned j);
-    void delete_insert(const unsigned from, const unsigned to,
-                       const bool from_side, const bool to_side);
+    void delete_insert(const unsigned from,
+                       const unsigned to,
+                       const bool from_side,
+                       const bool to_side);
     void mirror(const unsigned i);
 
     unsigned random_permute(void);

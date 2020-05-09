@@ -12,9 +12,10 @@
 
 using namespace std;
 
-pair<unsigned, unsigned> read_pin_file(ifstream &file, vector<Pin> &pin_list,
-                                       unordered_map<string, unsigned> &pin_map,
-                                       unsigned &num_blocks) {
+pair<unsigned, unsigned> read_pin_file(ifstream& file,
+                                       vector<Pin>& pin_list,
+                                       unordered_map<string, unsigned>& pin_map,
+                                       unsigned& num_blocks) {
     auto buffer = string();
 
     unsigned out_width, out_height;
@@ -60,9 +61,10 @@ pair<unsigned, unsigned> read_pin_file(ifstream &file, vector<Pin> &pin_list,
     return make_pair(out_width, out_height);
 }
 
-void read_net_file(ifstream &file, const vector<Pin> &pin_list,
-                   vector<Net> &net_list,
-                   const unordered_map<string, unsigned> &pin_map) {
+void read_net_file(ifstream& file,
+                   const vector<Pin>& pin_list,
+                   vector<Net>& net_list,
+                   const unordered_map<string, unsigned>& pin_map) {
     auto buffer = string();
 
     unsigned num_nets;
@@ -90,9 +92,12 @@ void read_net_file(ifstream &file, const vector<Pin> &pin_list,
     assert(net_list.size() == num_nets);
 }
 
-void save_file(ofstream &file, const time_t start_time, const double alpha,
-               const pair<int, int> dimension, const vector<Pin> &pin_list,
-               const vector<Net> &net_list) {
+void save_file(ofstream& file,
+               const time_t start_time,
+               const double alpha,
+               const pair<int, int> dimension,
+               const vector<Pin>& pin_list,
+               const vector<Net>& net_list) {
     const unsigned size = pin_list.size();
 
     const unsigned width = dimension.first, height = dimension.second;
@@ -107,8 +112,8 @@ void save_file(ofstream &file, const time_t start_time, const double alpha,
          << difftime(time(NULL), start_time) << "\n";
 
     for (unsigned i = 0; i < size; ++i) {
-        const Pin &pin = pin_list[i];
-        const string &name = pin.get_name();
+        const Pin& pin = pin_list[i];
+        const string& name = pin.get_name();
 
         if (pin.area_nonzero()) {
             const int x = pin.get_xpos(), y = pin.get_ypos(),

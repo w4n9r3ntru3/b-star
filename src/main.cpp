@@ -15,7 +15,7 @@
 #include "pins.h"
 #include "sa.h"
 
-int main(int argc, char const *argv[]) {
+int main(int argc, char const* argv[]) {
     using namespace std;
 
     time_t start = time(NULL);

@@ -7,7 +7,9 @@ class Cost {
 
    public:
     Cost();
-    Cost(double init_area, double init_hpwl, double init_alpha,
+    Cost(double init_area,
+         double init_hpwl,
+         double init_alpha,
          double init_ratio);
 
     double get_area() const;
@@ -24,9 +26,9 @@ class Cost {
     void set_width(double width);
     void set_height(double height);
 
-    double &get_alpha_mut();
-    double &get_width_mut();
-    double &get_height_mut();
+    double& get_alpha_mut();
+    double& get_width_mut();
+    double& get_height_mut();
 
     void rotate();
 
@@ -34,11 +36,20 @@ class Cost {
     void update_width(bool up, unsigned rounds);
     void update_height(bool up, unsigned rounds);
 
-    double operator()(unsigned width, unsigned width_norm, unsigned height,
-                      unsigned height_norm, unsigned hpwl, unsigned net_norm,
+    double operator()(unsigned width,
+                      unsigned width_norm,
+                      unsigned height,
+                      unsigned height_norm,
+                      unsigned hpwl,
+                      unsigned net_norm,
                       bool accepted) const;
 
-    double operator()(unsigned width, unsigned width_norm, unsigned height,
-                      unsigned height_norm, unsigned hpwl, unsigned net_norm,
-                      bool accepted, unsigned rounds);
+    double operator()(unsigned width,
+                      unsigned width_norm,
+                      unsigned height,
+                      unsigned height_norm,
+                      unsigned hpwl,
+                      unsigned net_norm,
+                      bool accepted,
+                      unsigned rounds);
 };
