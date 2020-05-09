@@ -7,15 +7,16 @@
 // Read only Net
 class Net {
     std::vector<unsigned> connected_pins;
+    const std::vector<Pin> *all_pins;
 
    public:
     Net();
     Net(Net &&net);
-    Net(std::vector<unsigned> &&conn);
+    Net(std::vector<unsigned> &&conn, const std::vector<Pin> &all_pins);
 
     Net &operator=(Net &&net);
 
     unsigned at(unsigned index) const;
 
-    unsigned hpwl(const std::vector<Pin> &pin_list) const;
+    unsigned hpwl(void) const;
 };

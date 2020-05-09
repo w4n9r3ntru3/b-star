@@ -85,7 +85,7 @@ void read_net_file(ifstream &file, const vector<Pin> &pin_list,
                    pin_list[connected[j]].area_nonzero();
         });
         assert(connected.size() == num_degree);
-        net_list.push_back(move(Net(move(connected))));
+        net_list.push_back(move(Net(move(connected), pin_list)));
     }
     assert(net_list.size() == num_nets);
 }

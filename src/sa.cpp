@@ -22,7 +22,7 @@ unsigned total_hpwl(const vector<Pin> &pin_list, const vector<Net> &net_list) {
     unsigned idx, hpwl;
     for (idx = hpwl = 0; idx < net_list.size(); ++idx) {
         const Net &net = net_list[idx];
-        hpwl += net.hpwl(pin_list);
+        hpwl += net.hpwl();
     }
     return hpwl;
 }
@@ -75,8 +75,8 @@ pair<int, int> SA(const pair<unsigned, unsigned> &boundary, BStar &tree,
     const unsigned size = tree.get_size();
     const unsigned net_upper_bound = (width + height) * net_list.size();
 
-    auto initial = tree.update(pin_list);
-    tree.check(pin_list);
+    auto initial = tree.update();
+    tree.check();
 
     printf("initial = (%d, %d)\n", initial.first, initial.second);
 
@@ -133,22 +133,22 @@ pair<int, int> SA(const pair<unsigned, unsigned> &boundary, BStar &tree,
             const char number = random_cdf(rdi_rp, rp_rs, rs_rm);
             switch (number) {
                 case 0:
-                    rdi = tree.random_delete_insert(pin_list);
+                    rdi = tree.random_delete_insert();
                     break;
                 case 1:
-                    rp = tree.random_permute(pin_list);
+                    rp = tree.random_permute();
                     break;
                 case 2:
-                    rs = tree.random_swap(pin_list);
+                    rs = tree.random_swap();
                     break;
                 default:
                     assert(number == 3);
-                    rm = tree.random_mirror(pin_list);
+                    rm = tree.random_mirror();
                     break;
             }
 
-            const auto plan = tree.update(pin_list);
-            tree.check(pin_list);
+            const auto plan = tree.update();
+            tree.check();
 
             const unsigned wire_len = total_hpwl(pin_list, net_list);
 
@@ -216,17 +216,17 @@ pair<int, int> SA(const pair<unsigned, unsigned> &boundary, BStar &tree,
             } else {
                 switch (number) {
                     case 0:
-                        tree.revert_delete_insert(pin_list, rdi);
+                        tree.revert_delete_insert(rdi);
                         break;
                     case 1:
-                        tree.revert_permute(pin_list, rp);
+                        tree.revert_permute(rp);
                         break;
                     case 2:
-                        tree.revert_swap(pin_list, rs);
+                        tree.revert_swap(rs);
                         break;
                     default:
                         assert(number == 3);
-                        tree.revert_mirror(pin_list, rm);
+                        tree.revert_mirror(rm);
                         break;
                 }
             }
@@ -255,7 +255,7 @@ pair<int, int> SA(const pair<unsigned, unsigned> &boundary, BStar &tree,
     restore(pin_list, best_solution, size);
 
     if ((best_width > best_height) != (width > height)) {
-        tree.flip(pin_list);
+        tree.flip();
         swap(best_width, best_height);
     }
 

@@ -13,7 +13,7 @@
 
 using namespace std;
 
-BStar::BStar() : nodes(vector<unsigned>()) {}
+BStar::BStar() : nodes(vector<unsigned>()), pin_list_ptr(nullptr) {}
 
 // static unsigned parent(unsigned index) { return ((index - 1) >> 1); }
 
@@ -23,6 +23,7 @@ static unsigned right_child(unsigned index) { return (index << 1) + 2; }
 
 BStar::BStar(vector<Pin> &pin_list, unsigned width, unsigned height) {
     auto index_list = vector<unsigned>();
+    pin_list_ptr = &pin_list;
 
     Pin::filter_area_nonzero(pin_list, index_list);
 
@@ -86,6 +87,10 @@ unsigned BStar::get_size() const { return nodes.size(); }
 
 unsigned BStar::get_root() const { return nodes[0]; }
 
+vector<Pin> &BStar::pin_list(void) { return *pin_list_ptr; }
+
+const vector<Pin> &BStar::pin_list(void) const { return *pin_list_ptr; }
+
 static unsigned size_recursive(unsigned root, const vector<Pin> &pin_list) {
     unsigned ans = 0;
     int id;
@@ -125,12 +130,12 @@ static void overlap_recursive(unsigned root, const vector<Pin> &pin_list) {
     }
 }
 
-void BStar::check(const vector<Pin> &pin_list) const {
+void BStar::check(void) const {
 #ifdef NDEBUG
     return;
 #endif
-    assert(size_recursive(get_root(), pin_list) == get_size());
-    overlap_recursive(get_root(), pin_list);
+    assert(size_recursive(get_root(), pin_list()) == get_size());
+    overlap_recursive(get_root(), pin_list());
 }
 
 static void remove_overlap(Pin &pin, deque<Boundary> &contour,
@@ -233,7 +238,8 @@ static void update_recursive(vector<Pin> &pin_list, unsigned root,
     }
 }
 
-pair<int, int> BStar::update(vector<Pin> &pin_list) const {
+pair<int, int> BStar::update(void) const {
+    auto &pin_list = *pin_list_ptr;
     auto contour = deque<Boundary>();
     int root = get_root();
     Pin &root_node = pin_list[root];
@@ -264,16 +270,13 @@ static void flip_recursive(unsigned root, vector<Pin> &pin_list) {
     }
 }
 
-void BStar::flip(vector<Pin> &pin_list) const {
-    flip_recursive(get_root(), pin_list);
-}
+void BStar::flip(void) { flip_recursive(get_root(), pin_list()); }
 
-void BStar::permute(vector<Pin> &pin_list, const unsigned idx) const {
-    pin_list[nodes[idx]].rotate();
-}
+void BStar::permute(const unsigned idx) { pin_list()[nodes[idx]].rotate(); }
 
-void BStar::swap(vector<Pin> &pin_list, const unsigned i, const unsigned j) {
-    Pin &pin_i = pin_list[nodes[i]], &pin_j = pin_list[nodes[j]];
+void BStar::swap(const unsigned i, const unsigned j) {
+    auto &plist = pin_list();
+    Pin &pin_i = plist[nodes[i]], &pin_j = plist[nodes[j]];
 
     assert(i != j);
     assert(pin_i.get_name() != pin_j.get_name());
@@ -283,17 +286,17 @@ void BStar::swap(vector<Pin> &pin_list, const unsigned i, const unsigned j) {
     std::swap(pin_i.get_name_mut(), pin_j.get_name_mut());
 }
 
-unsigned BStar::random_permute(vector<Pin> &pin_list) const {
+unsigned BStar::random_permute(void) {
     unsigned r = rand() % nodes.size();
-    permute(pin_list, r);
+    permute(r);
     return r;
 }
 
-void BStar::delete_insert(vector<Pin> &pin_list, const unsigned from,
-                          const unsigned to, const bool from_side,
-                          const bool to_side) const {
-    Pin &from_pin = pin_list[from];
-    Pin &to_pin = pin_list[to];
+void BStar::delete_insert(const unsigned from, const unsigned to,
+                          const bool from_side, const bool to_side) {
+    auto &plist = pin_list();
+    Pin &from_pin = plist[from];
+    Pin &to_pin = plist[to];
 
     int target;
 
@@ -311,7 +314,7 @@ void BStar::delete_insert(vector<Pin> &pin_list, const unsigned from,
 
     assert(target >= 0);
 
-    const Pin &target_pin = pin_list[target];
+    const Pin &target_pin = plist[target];
 
     assert(target_pin.leaf());
 
@@ -326,14 +329,14 @@ void BStar::delete_insert(vector<Pin> &pin_list, const unsigned from,
     }
 }
 
-void BStar::mirror(vector<Pin> &pin_list, const unsigned i) const {
-    Pin &pin = pin_list[i];
+void BStar::mirror(const unsigned i) {
+    Pin &pin = pin_list()[i];
     std::swap(pin.get_left_mut(), pin.get_right_mut());
 }
 
 constexpr bool fix_root = false;
 
-pair<unsigned, unsigned> BStar::random_swap(vector<Pin> &pin_list) {
+pair<unsigned, unsigned> BStar::random_swap(void) {
     unsigned a, b;
     if (fix_root) {
         a = (rand() % (nodes.size() - 1)) + 1;
@@ -346,25 +349,27 @@ pair<unsigned, unsigned> BStar::random_swap(vector<Pin> &pin_list) {
     }
     if (b >= a) ++b;
     assert(a != b);
-    swap(pin_list, a, b);
+    this->swap(a, b);
     return make_pair(a, b);
 }
 
 pair<pair<unsigned, bool>, pair<unsigned, bool>> BStar::random_delete_insert(
-    vector<Pin> &pin_list) const {
+    void) {
     int root;
     bool side;
 
-    if (pin_list[get_root()].leaf()) {
+    auto &plist = pin_list();
+
+    if (plist[get_root()].leaf()) {
         return make_pair(make_pair(0U, false), make_pair(0U, false));
     }
 
     do {
         root = rand() % get_size();
-    } while (pin_list[root].leaf());
+    } while (plist[root].leaf());
 
     while (true) {
-        const Pin &pin = pin_list[root];
+        const Pin &pin = plist[root];
         int left = pin.get_left(), right = pin.get_right();
 
         assert(!pin.leaf());
@@ -373,7 +378,7 @@ pair<pair<unsigned, bool>, pair<unsigned, bool>> BStar::random_delete_insert(
 
         if (left < 0 || (both_fine && (rand() % 2))) {
             assert(right >= 0 && right < (int)nodes.size());
-            const Pin &right_node = pin_list[right];
+            const Pin &right_node = plist[right];
 
             if (right_node.leaf()) {
                 side = true;
@@ -388,7 +393,7 @@ pair<pair<unsigned, bool>, pair<unsigned, bool>> BStar::random_delete_insert(
                 assert(both_fine);
             }
 
-            const Pin &left_node = pin_list[left];
+            const Pin &left_node = plist[left];
 
             if (left_node.leaf()) {
                 side = false;
@@ -408,10 +413,10 @@ pair<pair<unsigned, bool>, pair<unsigned, bool>> BStar::random_delete_insert(
 
     do {
         root = rand() % get_size();
-    } while (pin_list[root].leaf());
+    } while (plist[root].leaf());
 
     while (true) {
-        const Pin &pin = pin_list[root];
+        const Pin &pin = plist[root];
         if (root == from) {
             if (from_side) {
                 next = pin.get_left();
@@ -450,35 +455,29 @@ pair<pair<unsigned, bool>, pair<unsigned, bool>> BStar::random_delete_insert(
     const int to = root;
     const bool to_side = side;
 
-    delete_insert(pin_list, from, to, from_side, to_side);
+    this->delete_insert(from, to, from_side, to_side);
 
     return make_pair(make_pair(from, from_side), make_pair(to, to_side));
 }
 
-unsigned BStar::random_mirror(vector<Pin> &pin_list) const {
+unsigned BStar::random_mirror(void) {
     int r = rand() % nodes.size();
-    mirror(pin_list, r);
+    this->mirror(r);
     return r;
 }
 
-void BStar::revert_permute(vector<Pin> &pin_list, const unsigned action) const {
-    permute(pin_list, action);
-}
+void BStar::revert_permute(const unsigned action) { this->permute(action); }
 
-void BStar::revert_swap(vector<Pin> &pin_list,
-                        const pair<unsigned, unsigned> action) {
-    swap(pin_list, action.first, action.second);
+void BStar::revert_swap(const pair<unsigned, unsigned> action) {
+    this->swap(action.first, action.second);
 }
 
 void BStar::revert_delete_insert(
-    vector<Pin> &pin_list,
-    const pair<pair<unsigned, bool>, pair<unsigned, bool>> action) const {
+    const pair<pair<unsigned, bool>, pair<unsigned, bool>> action) {
     const auto from_pair = action.first, to_pair = action.second;
     const auto from = from_pair.first, to = to_pair.first;
     const auto from_side = from_pair.second, to_side = to_pair.second;
-    delete_insert(pin_list, to, from, to_side, from_side);
+    this->delete_insert(to, from, to_side, from_side);
 }
 
-void BStar::revert_mirror(vector<Pin> &pin_list, const unsigned i) const {
-    mirror(pin_list, i);
-}
+void BStar::revert_mirror(const unsigned i) { this->mirror(i); }

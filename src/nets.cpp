@@ -8,14 +8,20 @@
 
 using namespace std;
 
-Net::Net() : connected_pins(vector<unsigned>()) {}
+Net::Net() : connected_pins(vector<unsigned>()), all_pins(nullptr) {}
 
-Net::Net(Net &&net) : connected_pins(move(net.connected_pins)) {}
+Net::Net(Net &&net)
+    : connected_pins(move(net.connected_pins)), all_pins(net.all_pins) {
+    net.all_pins = nullptr;
+}
 
-Net::Net(vector<unsigned> &&conn) : connected_pins(move(conn)) {}
+Net::Net(vector<unsigned> &&conn, const vector<Pin> &all_pins)
+    : connected_pins(move(conn)), all_pins(&all_pins) {}
 
 Net &Net::operator=(Net &&net) {
     connected_pins = move(net.connected_pins);
+    all_pins = net.all_pins;
+    net.all_pins = nullptr;
     return *this;
 }
 
@@ -32,7 +38,9 @@ static pair<unsigned, unsigned> get_center(const Pin &pin) {
                      pin.get_ypos() + (pin.get_height() >> 1));
 }
 
-unsigned Net::hpwl(const vector<Pin> &pin_list) const {
+unsigned Net::hpwl() const {
+    const auto &pin_list = *all_pins;
+
     unsigned max_w, min_w, max_h, min_h;
     auto center = get_center(pin_list[connected_pins[0]]);
 
