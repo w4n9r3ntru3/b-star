@@ -25,13 +25,13 @@ class BStar {
 
     void flip(void);
 
-    void permute(const unsigned idx);
-    void swap(const unsigned i, const unsigned j);
-    void delete_insert(const unsigned from,
-                       const unsigned to,
-                       const bool from_side,
-                       const bool to_side);
-    void mirror(const unsigned i);
+    void permute(unsigned idx);
+    void swap(unsigned i, unsigned j);
+    void delete_insert(unsigned from,
+                       unsigned to,
+                       bool from_side,
+                       bool to_side);
+    void mirror(unsigned i);
 
     unsigned random_permute(void);
     std::pair<unsigned, unsigned> random_swap(void);
@@ -39,10 +39,9 @@ class BStar {
     random_delete_insert(void);
     unsigned random_mirror(void);
 
-    void revert_permute(const unsigned action);
-    void revert_swap(const std::pair<unsigned, unsigned> action);
+    void revert_permute(unsigned action);
+    void revert_swap(std::pair<unsigned, unsigned> action);
     void revert_delete_insert(
-        const std::pair<std::pair<unsigned, bool>, std::pair<unsigned, bool>>
-            action);
-    void revert_mirror(const unsigned action);
+        std::pair<std::pair<unsigned, bool>, std::pair<unsigned, bool>> action);
+    void revert_mirror(unsigned action);
 };

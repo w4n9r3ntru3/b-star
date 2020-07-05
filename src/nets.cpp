@@ -51,8 +51,9 @@ unsigned Net::hpwl() const {
     bool halt;
     for (i = 1, halt = false; i < connected_pins.size(); ++i) {
         const Pin& pin = pin_list[connected_pins[i]];
-        if (!pin.area_nonzero())
+        if (!pin.area_nonzero()) {
             halt = true;
+        }
         if (halt) {
             x = pin.get_xpos();
             y = pin.get_ypos();
@@ -63,14 +64,18 @@ unsigned Net::hpwl() const {
             x = center.first;
             y = center.second;
         }
-        if (max_w < x)
+        if (max_w < x) {
             max_w = x;
-        if (min_w > x)
+        }
+        if (min_w > x) {
             min_w = x;
-        if (max_h < y)
+        }
+        if (max_h < y) {
             max_h = y;
-        if (min_h > y)
+        }
+        if (min_h > y) {
             min_h = y;
+        }
     }
     assert(max_w >= min_w);
     assert(max_h >= min_h);

@@ -66,18 +66,18 @@ static bool is_close(double a, double b) {
     return (a - b) < epsilon && (b - a) < epsilon;
 }
 
-pair<int, int> SA(const pair<unsigned, unsigned>& boundary,
+pair<int, int> SA(pair<unsigned, unsigned> boundary,
                   BStar& tree,
                   vector<Pin>& pin_list,
                   const vector<Net>& net_list,
-                  const pair<unsigned, unsigned>& iter_info,
-                  const unsigned num_blocks,
-                  const unsigned episodes,
-                  const unsigned high_temp,
-                  const double alpha,
-                  const double ratio,
-                  const double P,
-                  const double C) {
+                  pair<unsigned, unsigned> iter_info,
+                  unsigned num_blocks,
+                  unsigned episodes,
+                  unsigned high_temp,
+                  double alpha,
+                  double ratio,
+                  double P,
+                  double C) {
     const unsigned width = boundary.first, height = boundary.second;
     const unsigned epochs = iter_info.first, interrupt = iter_info.second;
     const unsigned size = tree.get_size();

@@ -21,8 +21,8 @@ void read_net_file(std::ifstream& file,
                    const std::unordered_map<std::string, unsigned>& pin_map);
 
 void save_file(std::ofstream& file,
-               const time_t start_time,
-               const double alpha,
-               const std::pair<int, int> dimension,
+               time_t start_time,
+               double alpha,
+               std::pair<int, int> dimension,
                const std::vector<Pin>& pin_list,
                const std::vector<Net>& net_list);

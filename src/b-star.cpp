@@ -42,10 +42,12 @@ BStar::BStar(vector<Pin>& pin_list, unsigned width, unsigned height) {
     sort(index_list.rbegin(), index_list.rend(),
          [&](unsigned a, unsigned b) -> bool {
              const auto &pin_a = pin_list[a], &pin_b = pin_list[b];
-             if (pin_a.get_width() < pin_b.get_width())
+             if (pin_a.get_width() < pin_b.get_width()) {
                  return true;
-             if (pin_a.get_width() > pin_b.get_width())
+             }
+             if (pin_a.get_width() > pin_b.get_width()) {
                  return false;
+             }
              return pin_a.get_height() < pin_b.get_height();
          });
 
@@ -321,10 +323,10 @@ unsigned BStar::random_permute(void) {
     return r;
 }
 
-void BStar::delete_insert(const unsigned from,
-                          const unsigned to,
-                          const bool from_side,
-                          const bool to_side) {
+void BStar::delete_insert(unsigned from,
+                          unsigned to,
+                          bool from_side,
+                          bool to_side) {
     auto& plist = pin_list();
     Pin& from_pin = plist[from];
     Pin& to_pin = plist[to];
@@ -498,11 +500,11 @@ unsigned BStar::random_mirror(void) {
     return r;
 }
 
-void BStar::revert_permute(const unsigned action) {
+void BStar::revert_permute(unsigned action) {
     this->permute(action);
 }
 
-void BStar::revert_swap(const pair<unsigned, unsigned> action) {
+void BStar::revert_swap(pair<unsigned, unsigned> action) {
     this->swap(action.first, action.second);
 }
 
@@ -514,6 +516,6 @@ void BStar::revert_delete_insert(
     this->delete_insert(to, from, to_side, from_side);
 }
 
-void BStar::revert_mirror(const unsigned i) {
+void BStar::revert_mirror(unsigned i) {
     this->mirror(i);
 }

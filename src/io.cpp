@@ -93,9 +93,9 @@ void read_net_file(ifstream& file,
 }
 
 void save_file(ofstream& file,
-               const time_t start_time,
-               const double alpha,
-               const pair<int, int> dimension,
+               time_t start_time,
+               double alpha,
+               pair<int, int> dimension,
                const vector<Pin>& pin_list,
                const vector<Net>& net_list) {
     const unsigned size = pin_list.size();
